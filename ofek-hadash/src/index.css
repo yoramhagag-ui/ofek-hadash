@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@theme {
+  /* MD3 color tokens */
+  --color-background: #fdf8ff;
+  --color-surface: #fdf8ff;
+  --color-surface-bright: #fdf8ff;
+  --color-surface-dim: #ddd8e0;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f7f2fa;
+  --color-surface-container: #f1ecf4;
+  --color-surface-container-high: #ebe6ee;
+  --color-surface-container-highest: #e5e1e9;
+  --color-surface-variant: #e5e1e9;
+
+  --color-primary: #00478d;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #005eb8;
+  --color-on-primary-container: #c8daff;
+  --color-primary-fixed: #d6e3ff;
+  --color-primary-fixed-dim: #a9c7ff;
+  --color-inverse-primary: #a9c7ff;
+
+  --color-secondary: #006d41;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #90f4b7;
+  --color-on-secondary-container: #007144;
+  --color-secondary-fixed: #93f7ba;
+  --color-secondary-fixed-dim: #77da9f;
+
+  --color-tertiary: #50388b;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #6851a5;
+  --color-on-tertiary-container: #e1d4ff;
+  --color-tertiary-fixed: #e9ddff;
+  --color-tertiary-fixed-dim: #cfbcff;
+
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  --color-on-surface: #1c1b20;
+  --color-on-surface-variant: #424752;
+  --color-outline: #727783;
+  --color-outline-variant: #c2c6d4;
+  --color-inverse-surface: #312f35;
+  --color-inverse-on-surface: #f4eff7;
+  --color-surface-tint: #005db6;
+}
+
+* {
+  font-family: 'Arimo', Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #fdf8ff;
+  color: #1c1b20;
+  direction: rtl;
+  margin: 0;
+}
+
+#root {
+  width: 100%;
+  min-height: 100svh;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c2c6d4; border-radius: 10px; }
+
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+@keyframes pulse-voice {
+  0%, 100% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.08); opacity: 0.5; }
+}
+.voice-pulse { animation: pulse-voice 1.5s ease-in-out infinite; }

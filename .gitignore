@@ -1,0 +1,29 @@
+# סביבה
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.venv/
+*.egg-info/
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+
+# IDEs
+.vscode/
+.idea/
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Misc
+*.local
+token.json
