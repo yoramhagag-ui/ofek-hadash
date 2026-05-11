@@ -6,12 +6,7 @@ app = FastAPI(title="אופק חדש API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:4173",
-        "https://ofek-hadash.vercel.app",
-    ],
-    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
