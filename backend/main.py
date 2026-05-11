@@ -1,17 +1,17 @@
-import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import schedule, tasks, progress, settings, tts, commander
 
 app = FastAPI(title="אופק חדש API", version="1.0.0")
 
-_default_origins = "http://localhost:5173,http://localhost:4173"
-_origins = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", _default_origins).split(",") if o.strip()]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_origins,
-    allow_credentials=True,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:4173",
+        "https://ofek-hadash.vercel.app",
+    ],
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_methods=["*"],
     allow_headers=["*"],
 )

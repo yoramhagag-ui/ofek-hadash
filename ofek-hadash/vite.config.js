@@ -16,8 +16,8 @@ export default defineConfig({
         description: 'אפליקציית שיקום אישית מבוססת AI',
         lang: 'he',
         dir: 'rtl',
-        theme_color: '#00478d',
-        background_color: '#fdf8ff',
+        theme_color: '#0D0D0F',
+        background_color: '#0D0D0F',
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',
@@ -28,25 +28,6 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        runtimeCaching: [
-          {
-            // cache API calls for offline fallback
-            urlPattern: ({ url }) => url.origin === (process.env.VITE_API_URL || 'http://localhost:8001'),
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'api-cache',
-              networkTimeoutSeconds: 5,
-              expiration: { maxEntries: 50, maxAgeSeconds: 86400 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-          {
-            // cache Google Fonts
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'StaleWhileRevalidate',
-            options: { cacheName: 'google-fonts-cache' },
-          },
-        ],
       },
     }),
   ],

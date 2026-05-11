@@ -59,11 +59,13 @@ body {
   color: #1c1b20;
   direction: rtl;
   margin: 0;
+  overflow-x: hidden;
 }
 
 #root {
   width: 100%;
   min-height: 100svh;
+  overflow-x: hidden;
 }
 
 .material-symbols-outlined {
@@ -76,6 +78,11 @@ body {
 
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* prevent iOS auto-zoom on input focus */
+input, select, textarea {
+  font-size: max(16px, 1em);
+}
 
 @keyframes pulse-voice {
   0%, 100% { transform: scale(0.95); opacity: 0.8; }

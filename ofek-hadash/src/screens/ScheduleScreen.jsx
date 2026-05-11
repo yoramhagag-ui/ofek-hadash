@@ -10,17 +10,25 @@ const categoryColors = {
   family:    '#50388b', sleep:    '#424752',
 };
 
-function Skeleton() {
+function StatusNode({ isDone, isCurrent, isMissed }) {
+  if (isDone) return (
+    <div className="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center border-4 border-background shadow-sm z-10 shrink-0">
+      <span className="material-symbols-outlined text-on-secondary-container text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+    </div>
+  );
+  if (isMissed) return (
+    <div className="w-10 h-10 rounded-full bg-error-container flex items-center justify-center border-4 border-background shadow-sm z-10 shrink-0">
+      <span className="material-symbols-outlined text-on-error-container text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>cancel</span>
+    </div>
+  );
+  if (isCurrent) return (
+    <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center border-4 border-background shadow-md z-10 shrink-0">
+      <div className="w-3 h-3 rounded-full bg-white animate-pulse" />
+    </div>
+  );
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} style={{
-          backgroundColor: '#f1ecf4', borderRadius: 14, height: 68,
-          animation: 'pulse 1.5s ease-in-out infinite',
-          animationDelay: `${i * 0.07}s`,
-        }} />
-      ))}
-      <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }`}</style>
+    <div className="w-10 h-10 rounded-full bg-surface-dim flex items-center justify-center border-4 border-background shadow-sm z-10 shrink-0">
+      <span className="material-symbols-outlined text-on-surface-variant text-xl">schedule</span>
     </div>
   );
 }
@@ -31,63 +39,98 @@ export default function ScheduleScreen() {
   const currentBlock = getCurrentBlock(blocks, wakeHour, wakeMin);
   const [activeBlock, setActiveBlock] = useState(null);
 
+  const now = new Date();
+  const nowMins = now.getHours() * 60 + now.getMinutes();
+  const wakeMins = wakeHour * 60 + wakeMin;
+
   return (
-    <div style={{ padding: '24px 20px', maxWidth: 600, margin: '0 auto' }}>
-      <div style={{ marginBottom: 20 }}>
-        <h2 style={{ fontSize: 26, fontWeight: 700, margin: '0 0 4px', color: '#1c1b20' }}>לוח זמנים</h2>
-        <p style={{ fontSize: 13, color: '#424752', margin: 0 }}>
-          קימה: {formatTime(wakeHour, wakeMin)} · {blocks.length} בלוקים
+    <div dir="rtl" className="px-5 pt-6 pb-4 max-w-lg mx-auto">
+      <div className="mb-5">
+        <h2 className="text-2xl font-bold text-primary mb-0.5">לוח זמנים יומי</h2>
+        <p className="text-sm text-on-surface-variant">
+          {now.toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long' })}
         </p>
       </div>
 
-      {loading ? <Skeleton /> : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {blocks.map(block => {
-            const start    = getBlockTime(wakeHour, wakeMin, block.offsetMins);
-            const end      = getBlockTime(wakeHour, wakeMin, block.offsetMins + block.durationMins);
-            const isCurrent = currentBlock?.id === block.id;
-            const isDone   = completed[block.id];
+      {loading ? (
+        <div className="flex flex-col gap-4">
+          {[1,2,3,4].map(i => (
+            <div key={i} className="flex gap-3">
+              <div className="w-10 h-10 rounded-full bg-surface-container animate-pulse shrink-0" />
+              <div className="flex-1 h-20 rounded-2xl bg-surface-container animate-pulse" />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="relative">
+          {/* vertical line */}
+          <div className="absolute right-[19px] top-4 bottom-4 w-0.5 bg-outline-variant" />
 
-            return (
-              <div key={block.id} onClick={() => setActiveBlock(block)} style={{
-                backgroundColor: isCurrent ? '#ffffff' : isDone ? 'rgba(144,244,183,0.12)' : '#f7f2fa',
-                borderRadius: 14, padding: '14px 16px',
-                borderRight: `4px solid ${categoryColors[block.category] || '#c2c6d4'}`,
-                boxShadow: isCurrent ? '0 2px 12px rgba(0,0,0,0.08)' : '0 1px 3px rgba(0,0,0,0.04)',
-                display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer',
-                transition: 'box-shadow 0.2s, background 0.2s',
-              }}>
-                {/* Checkbox */}
-                <div style={{ width: 22, height: 22, borderRadius: 6, flexShrink: 0,
-                  border: isDone ? '2px solid #006d41' : '2px solid #c2c6d4',
-                  backgroundColor: isDone ? '#006d41' : 'transparent',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {isDone && <span className="material-symbols-outlined" style={{ fontSize: 13, color: '#fff' }}>check</span>}
-                </div>
+          <div className="flex flex-col gap-5">
+            {blocks.map((block) => {
+              const start    = getBlockTime(wakeHour, wakeMin, block.offsetMins);
+              const end      = getBlockTime(wakeHour, wakeMin, block.offsetMins + block.durationMins);
+              const blockStartMins = wakeMins + block.offsetMins;
+              const blockEndMins   = blockStartMins + block.durationMins;
+              const isCurrent = currentBlock?.id === block.id;
+              const isDone    = !!completed[block.id];
+              const isMissed  = !isDone && !isCurrent && nowMins > blockEndMins;
+              const isPast    = nowMins > blockEndMins;
+              const borderColor = categoryColors[block.category] || '#c2c6d4';
 
-                <span style={{ fontSize: 24 }}>{block.icon}</span>
+              return (
+                <div key={block.id} className={`relative flex gap-3 ${!isCurrent && isPast && !isDone ? 'opacity-70' : ''}`}>
+                  <StatusNode isDone={isDone} isCurrent={isCurrent} isMissed={!isDone && isPast && !isCurrent} />
 
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-                    <span style={{ fontSize: 15, fontWeight: 700, color: isDone ? '#727783' : '#1c1b20',
-                      textDecoration: isDone ? 'line-through' : 'none' }}>{block.name}</span>
+                  <div onClick={() => setActiveBlock(block)}
+                    className={`flex-1 bg-surface-container-lowest rounded-2xl p-4 cursor-pointer transition-all
+                      ${isCurrent ? 'shadow-lg border-2 border-primary' : 'shadow-sm border border-outline-variant'}
+                      border-r-4`}
+                    style={{ borderRightColor: borderColor }}>
+
+                    <div className="flex justify-between items-start mb-1">
+                      <span className={`text-xs font-bold ${isCurrent ? 'text-primary' : isDone ? 'text-secondary' : 'text-on-surface-variant'}`}>
+                        {isCurrent ? 'פעיל כעת' : isDone ? 'בוצע בהצלחה' : 'ממתין'}
+                      </span>
+                      <span className="text-xs font-mono text-on-surface-variant">
+                        {formatTime(start.h, start.m)} – {formatTime(end.h, end.m)}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xl">{block.icon}</span>
+                      <h3 className={`text-base font-bold text-on-surface ${isDone ? 'line-through text-on-surface-variant' : ''}`}>
+                        {block.name}
+                      </h3>
+                    </div>
+
+                    <p className="text-xs text-on-surface-variant">{block.durationMins} דקות</p>
+
                     {isCurrent && (
-                      <span style={{ backgroundColor: '#005eb8', color: '#c8daff',
-                        fontSize: 10, fontWeight: 700, padding: '1px 7px', borderRadius: 99 }}>עכשיו</span>
+                      <div className="mt-3">
+                        <button onClick={e => { e.stopPropagation(); setActiveBlock(block); }}
+                          className="bg-primary text-on-primary rounded-full px-4 py-2 text-sm font-bold border-none cursor-pointer">
+                          התחל עכשיו
+                        </button>
+                      </div>
+                    )}
+
+                    {!isCurrent && (
+                      <button onClick={e => { e.stopPropagation(); toggle(block.id); }}
+                        className={`mt-2 flex items-center gap-1 text-xs font-medium border-none bg-transparent cursor-pointer
+                          ${isDone ? 'text-on-surface-variant' : 'text-primary'}`}>
+                        <span className="material-symbols-outlined text-sm"
+                          style={{ fontVariationSettings: isDone ? "'FILL' 1" : "'FILL' 0" }}>
+                          {isDone ? 'check_circle' : 'radio_button_unchecked'}
+                        </span>
+                        {isDone ? 'הסר סימון' : 'סמן כהושלם'}
+                      </button>
                     )}
                   </div>
-                  <div style={{ fontSize: 12, color: '#727783', fontFamily: 'monospace' }}>
-                    {formatTime(start.h, start.m)} – {formatTime(end.h, end.m)}
-                  </div>
                 </div>
-
-                <div style={{ fontSize: 12, color: '#727783', textAlign: 'center', flexShrink: 0 }}>
-                  <div style={{ fontWeight: 700, fontSize: 14, color: '#424752' }}>{block.durationMins}</div>
-                  <div>דק׳</div>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       )}
 

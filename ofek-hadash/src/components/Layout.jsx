@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { api } from '../api/client';
 
 const navItems = [
-  { id: 'home',      label: 'דף הבית',   icon: 'home' },
-  { id: 'schedule',  label: 'לוח זמנים', icon: 'calendar_today' },
-  { id: 'commander', label: 'המפקדת',    icon: 'smart_toy' },
-  { id: 'progress',  label: 'התקדמות',   icon: 'monitoring' },
-  { id: 'tasks',     label: 'משימות',    icon: 'task_alt' },
-  { id: 'settings',  label: 'הגדרות',    icon: 'settings' },
+  { id: 'home',      label: 'בית',    icon: 'home' },
+  { id: 'schedule',  label: 'לו״ז',   icon: 'calendar_today' },
+  { id: 'commander', label: 'סוכנת',  icon: 'smart_toy' },
+  { id: 'progress',  label: 'מעקב',   icon: 'monitoring' },
+  { id: 'tasks',     label: 'משימות', icon: 'task_alt' },
+  { id: 'settings',  label: 'הגדרות', icon: 'settings' },
 ];
 
 export default function Layout({ active, onSelect, user, onLogout, children }) {
@@ -22,10 +22,9 @@ export default function Layout({ active, onSelect, user, onLogout, children }) {
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
 
-  // load today's score for the sidebar
   useEffect(() => {
     api.getToday().then(d => setTodayScore(d.score ?? 0)).catch(() => {});
-  }, [active]); // refresh when tab changes
+  }, [active]);
 
   const handleInstall = async () => {
     if (!installPrompt) return;
@@ -40,151 +39,98 @@ export default function Layout({ active, onSelect, user, onLogout, children }) {
     onLogout?.();
   };
 
-  // first letter of user name for avatar
   const initial = user ? user.charAt(0).toUpperCase() : '?';
 
   return (
-    <div dir="rtl" style={{ minHeight: '100svh', backgroundColor: '#fdf8ff', color: '#1c1b20' }}>
+    <div dir="rtl" className="bg-background text-on-surface min-h-screen overflow-x-hidden">
 
       {/* TopAppBar */}
-      <header style={{
-        backgroundColor: '#f7f2fa', boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 40, height: 64,
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 20px',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <header className="bg-surface-container-low shadow-sm fixed top-0 w-full z-50 flex flex-row-reverse justify-between items-center px-5 py-2 h-16">
+        <div className="flex items-center gap-3">
           {installPrompt && !installed && (
-            <button onClick={handleInstall} title="התקן אפליקציה" style={{
-              display: 'flex', alignItems: 'center', gap: 4, backgroundColor: '#00478d',
-              color: '#fff', border: 'none', borderRadius: 99, padding: '6px 12px',
-              fontSize: 12, fontWeight: 700, cursor: 'pointer',
-            }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>install_mobile</span>
+            <button onClick={handleInstall} className="flex items-center gap-1 bg-primary text-on-primary rounded-full px-3 py-1 text-xs font-bold">
+              <span className="material-symbols-outlined text-base">install_mobile</span>
               התקן
             </button>
           )}
-          <button onClick={handleLogout} title="יציאה" style={{
-            display: 'flex', alignItems: 'center', gap: 4,
-            background: 'none', border: 'none', cursor: 'pointer',
-            color: '#727783', padding: 4, borderRadius: 8,
-          }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 24 }}>logout</span>
+          <button onClick={handleLogout} className="p-1 rounded-lg text-on-surface-variant">
+            <span className="material-symbols-outlined text-2xl">logout</span>
           </button>
         </div>
 
-        <span style={{ fontSize: 22, fontWeight: 700, color: '#00478d' }}>אופק-חדש</span>
+        <span className="text-xl font-bold text-primary">אופק-חדש</span>
 
-        {/* Mobile: user avatar */}
-        <div style={{
-          width: 36, height: 36, borderRadius: '50%', backgroundColor: '#00478d',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 16, fontWeight: 700, color: '#fff',
-        }} className="md:hidden">
+        <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-on-primary text-sm font-bold md:hidden">
           {initial}
         </div>
-        <div className="hidden md:block" style={{ width: 36 }} />
+        <div className="hidden md:block w-9" />
       </header>
 
       {/* SideNav – desktop only */}
-      <nav style={{
-        position: 'fixed', right: 0, top: 0, height: '100%', width: 256,
-        backgroundColor: '#f1ecf4', borderLeft: '1px solid #c2c6d4',
-        boxShadow: '-2px 0 8px rgba(0,0,0,0.06)', zIndex: 50,
-        display: 'flex', flexDirection: 'column', padding: 16, overflowY: 'auto',
-      }} className="hidden md:flex">
-        <div style={{ fontSize: 22, fontWeight: 700, color: '#00478d', marginBottom: 20, marginTop: 16 }}>אופק-חדש</div>
+      <nav className="hidden md:flex fixed right-0 top-0 h-full w-64 bg-surface-container-low border-l border-outline-variant flex-col p-4 z-50 overflow-y-auto">
+        <div className="text-xl font-bold text-primary mb-5 mt-4">אופק-חדש</div>
 
-        {/* User card */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 12, marginBottom: 8, backgroundColor: '#fff', borderRadius: 14 }}>
-          <div style={{
-            width: 44, height: 44, borderRadius: '50%', backgroundColor: '#00478d',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 20, fontWeight: 700, color: '#fff', flexShrink: 0,
-          }}>
+        <div className="flex items-center gap-3 p-3 mb-2 bg-white rounded-2xl">
+          <div className="w-11 h-11 rounded-full bg-primary flex items-center justify-center text-on-primary text-lg font-bold shrink-0">
             {initial}
           </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: '#1c1b20', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-              {user || 'משתמש'}
-            </div>
-            <div style={{ fontSize: 12, color: todayScore !== null ? '#006d41' : '#424752', fontWeight: todayScore !== null ? 600 : 400 }}>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-bold text-on-surface truncate">{user || 'משתמש'}</div>
+            <div className={`text-xs font-medium ${todayScore !== null ? 'text-secondary' : 'text-on-surface-variant'}`}>
               {todayScore !== null ? `התקדמות היום: ${todayScore}%` : 'טוען...'}
             </div>
           </div>
         </div>
 
-        {/* Nav items */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, marginTop: 8 }}>
+        <div className="flex flex-col gap-1 flex-1 mt-2">
           {navItems.map(item => {
             const isActive = active === item.id;
             return (
-              <button key={item.id} onClick={() => onSelect(item.id)} style={{
-                display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px',
-                borderRadius: 12, border: 'none', cursor: 'pointer', width: '100%', textAlign: 'right',
-                backgroundColor: isActive ? '#90f4b7' : 'transparent',
-                color: isActive ? '#007144' : '#424752',
-                fontWeight: isActive ? 700 : 500, fontSize: 14,
-                transition: 'background 0.15s',
-              }}>
-                <span className="material-symbols-outlined" style={{
-                  fontSize: 22,
-                  fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0",
-                }}>{item.icon}</span>
+              <button key={item.id} onClick={() => onSelect(item.id)}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl border-none cursor-pointer w-full text-right text-sm font-medium transition-colors
+                  ${isActive ? 'bg-secondary-container text-on-secondary-container font-bold' : 'text-on-surface-variant hover:bg-surface-container'}`}>
+                <span className="material-symbols-outlined text-xl"
+                  style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}>
+                  {item.icon}
+                </span>
                 {item.label}
               </button>
             );
           })}
         </div>
 
-        {/* Logout + quick-start */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 16 }}>
-          <button onClick={() => onSelect('schedule')} style={{
-            backgroundColor: '#00478d', color: '#ffffff',
-            border: 'none', borderRadius: 99, padding: '12px 24px',
-            fontWeight: 700, fontSize: 14, cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-          }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>play_circle</span>
+        <div className="flex flex-col gap-2 mt-4">
+          <button onClick={() => onSelect('schedule')} className="bg-primary text-on-primary rounded-full px-6 py-3 font-bold text-sm flex items-center justify-center gap-2 border-none cursor-pointer">
+            <span className="material-symbols-outlined text-lg">play_circle</span>
             לוח הזמנים
           </button>
-          <button onClick={handleLogout} style={{
-            backgroundColor: 'transparent', color: '#727783',
-            border: '1px solid #e5e1e9', borderRadius: 99, padding: '10px 24px',
-            fontWeight: 500, fontSize: 13, cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-          }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>logout</span>
+          <button onClick={handleLogout} className="bg-transparent text-on-surface-variant border border-outline-variant rounded-full px-6 py-2.5 text-sm flex items-center justify-center gap-1.5 cursor-pointer">
+            <span className="material-symbols-outlined text-lg">logout</span>
             התנתקות
           </button>
         </div>
       </nav>
 
-      {/* Main content */}
+      {/* Main */}
       <main className="md:mr-64 layout-main">
         {children}
       </main>
 
-      {/* Bottom nav – mobile only */}
-      <nav style={{
-        position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 40,
-        backgroundColor: '#fdf8ff', borderTop: '1px solid #e5e1e9',
-        display: 'flex', justifyContent: 'space-around', alignItems: 'center',
-        height: 64, padding: '0 4px',
-      }} className="md:hidden">
+      {/* Bottom nav – mobile */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface-container-low border-t border-outline-variant flex justify-around items-center px-1 pt-1.5"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 6px)' }}>
         {navItems.map(item => {
           const isActive = active === item.id;
           return (
-            <button key={item.id} onClick={() => onSelect(item.id)} style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
-              background: 'none', border: 'none', cursor: 'pointer', padding: '4px 6px',
-              color: isActive ? '#00478d' : '#424752', flex: 1,
-            }}>
-              <span className="material-symbols-outlined" style={{
-                fontSize: 22,
-                fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0",
-              }}>{item.icon}</span>
-              <span style={{ fontSize: 10, fontWeight: isActive ? 700 : 400 }}>{item.label}</span>
+            <button key={item.id} onClick={() => onSelect(item.id)}
+              className={`flex flex-col items-center gap-0.5 border-none cursor-pointer py-1 px-1.5 rounded-xl transition-all min-h-[44px] justify-center
+                ${isActive ? 'bg-secondary-container text-on-secondary-container' : 'bg-transparent text-on-surface-variant'}`}
+              style={{ flex: 1 }}>
+              <span className="material-symbols-outlined text-2xl"
+                style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}>
+                {item.icon}
+              </span>
+              <span className={`text-[9px] ${isActive ? 'font-bold' : 'font-normal'}`}>{item.label}</span>
             </button>
           );
         })}
@@ -193,12 +139,10 @@ export default function Layout({ active, onSelect, user, onLogout, children }) {
       <style>{`
         .layout-main {
           padding-top: 64px;
-          padding-bottom: 72px;
+          padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
         }
         @media (min-width: 768px) {
-          .layout-main {
-            padding-bottom: 0;
-          }
+          .layout-main { padding-bottom: 0; }
         }
       `}</style>
     </div>

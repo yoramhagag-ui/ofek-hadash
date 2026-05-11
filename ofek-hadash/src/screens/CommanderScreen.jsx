@@ -134,7 +134,7 @@ export default function CommanderScreen() {
     }));
 
   return (
-    <div className="commander-wrap" style={{ display: 'flex', height: 'calc(100svh - 136px)', overflow: 'hidden' }}>
+    <div className="commander-wrap" style={{ display: 'flex', height: 'calc(100svh - 64px - 68px - env(safe-area-inset-bottom, 0px))', overflow: 'hidden' }}>
 
       {/* ── Chat area ── */}
       <section style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', backgroundColor: '#fdf8ff' }}>

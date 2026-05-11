@@ -1,7 +1,6 @@
-fastapi==0.136.1
-uvicorn==0.46.0
-supabase==2.30.0
-python-dotenv==1.2.2
-pydantic==2.13.4
-edge-tts==7.2.8
-anthropic==0.100.0
+fastapi
+uvicorn
+supabase
+edge-tts
+anthropic
+python-dotenv
