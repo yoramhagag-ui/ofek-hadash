@@ -117,8 +117,9 @@ export default function CommanderScreen() {
       const assistantMsg = { role: 'assistant', content: reply, time: getTime() };
       setMessages(prev => [...prev, assistantMsg]);
       speak(reply);
-    } catch {
-      setError('שגיאה בתקשורת עם הסוכנת. בדוק שה-backend רץ ו-ANTHROPIC_API_KEY מוגדר.');
+    } catch (err) {
+      const msg = err?.message || String(err);
+      setError(`שגיאה: ${msg.slice(0, 120)}`);
     } finally {
       setLoading(false);
     }
